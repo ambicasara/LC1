@@ -1,0 +1,56 @@
+using System;
+
+public class Solution
+{
+    public bool IsNumber(string s)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+            return false;
+
+        s = s.Trim(); // remove leading/trailing spaces
+        bool numberSeen = false;
+        bool dotSeen = false;
+        bool eSeen = false;
+        bool numberAfterE = true;
+
+        for (int i = 0; i < s.Length; i++)
+        {
+            char c = s[i];
+
+            if (Char.IsDigit(c))
+            {
+                numberSeen = true;
+                if (eSeen)
+                    numberAfterE = true;
+            }
+            else if (c == '+' || c == '-')
+            {
+                // Sign must be at the start or just after 'e' or 'E'
+                if (i != 0 && s[i - 1] != 'e' && s[i - 1] != 'E')
+                    return false;
+            }
+            else if (c == '.')
+            {
+                // Dot must appear only once and not after 'e'
+                if (dotSeen || eSeen)
+                    return false;
+                dotSeen = true;
+            }
+            else if (c == 'e' || c == 'E')
+            {
+                // e must appear only once and after a number
+                if (eSeen || !numberSeen)
+                    return false;
+                eSeen = true;
+                numberAfterE = false; // reset for digits after e
+            }
+            else
+            {
+                // Invalid character
+                return false;
+            }
+        }
+
+        return numberSeen && numberAfterE;
+    }
+}
